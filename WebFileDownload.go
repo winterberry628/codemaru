@@ -10,10 +10,10 @@ import (
 	"strings"
 )
 
-func WebFileDownload(urlAddress string, dir string, fileName string, referer string) {
+func WebFileDownload(urlAddress string, dir string, fileName string, referer string, showMessage bool) {
 	parsedUrl, err := url.Parse(urlAddress)
 	if err != nil {
-		panic("URL 생성 불가.")
+		fmt.Println("URL 파싱 불가.")
 	}
 
 	urlPath := parsedUrl.Path
@@ -29,7 +29,7 @@ func WebFileDownload(urlAddress string, dir string, fileName string, referer str
 	file, err := os.Create(dir + string(os.PathSeparator) + fileName)
 	defer file.Close()
 	if err != nil {
-		panic("파일 생성 불가.")
+		fmt.Println("파일 생성 불가.")
 	}
 
 	data := url.Values{}
@@ -37,7 +37,7 @@ func WebFileDownload(urlAddress string, dir string, fileName string, referer str
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", urlAddress, bytes.NewBufferString(data.Encode()))
 	if err != nil {
-		panic("URL 리퀘스트 실패.")
+		fmt.Println("URL 리퀘스트 실패.")
 	}
 
 	req.Header.Add("User-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36")
@@ -58,7 +58,9 @@ func WebFileDownload(urlAddress string, dir string, fileName string, referer str
 		fmt.Println(urlAddress, "파일쓰기 실패!")
 	}
 
-	fmt.Println(urlAddress, "다운로드 완료!", size, "Byte")
+	if showMessage == true {
+		fmt.Println(urlAddress, "다운로드 완료!", size, "Byte")
+	}
 
 	return
 }
