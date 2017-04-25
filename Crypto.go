@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 )
 
-func gzipStringPack(text []byte) []byte {
+func GzipStringPack(text []byte) []byte {
 	var b bytes.Buffer
 	w := gzip.NewWriter(&b)
 	w.Write(text)
@@ -14,7 +14,7 @@ func gzipStringPack(text []byte) []byte {
 	return b.Bytes()
 }
 
-func gzipStringUnpack(text []byte) []byte {
+func GzipStringUnpack(text []byte) []byte {
 	var b bytes.Buffer
 	r, err := gzip.NewReader(&b)
 	if err != nil {
@@ -37,11 +37,11 @@ func Encrypt(text []byte) []byte {
 	a := base64.StdEncoding.EncodeToString(text)
 	a = base64.StdEncoding.EncodeToString([]byte(ReverseString(a)))
 
-	return gzipStringPack([]byte(a))
+	return GzipStringPack([]byte(a))
 }
 
 func Decrypt(text []byte) []byte {
-	text = gzipStringUnpack(text)
+	text = GzipStringUnpack(text)
 
 	a, err := base64.StdEncoding.DecodeString(string(text))
 	if err != nil {
