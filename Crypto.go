@@ -1,30 +1,9 @@
 package codemaru
 
 import (
-	"bytes"
-	"compress/gzip"
 	"encoding/base64"
+	"strings"
 )
-
-func GzipStringPack(text []byte) []byte {
-	var b bytes.Buffer
-	w := gzip.NewWriter(&b)
-	w.Write(text)
-	w.Close()
-	return b.Bytes()
-}
-
-func GzipStringUnpack(text []byte) []byte {
-	var b bytes.Buffer
-	r, err := gzip.NewReader(&b)
-	if err != nil {
-		panic(err.Error())
-	}
-	result := make([]byte, 100)
-	r.Read(result)
-	r.Close()
-	return b.Bytes()
-}
 
 func ReverseString(s string) string {
 	runes := []rune(s)
@@ -38,13 +17,22 @@ func Encrypt(text []byte) []byte {
 	a := base64.StdEncoding.EncodeToString(text)
 	a = base64.StdEncoding.EncodeToString([]byte(ReverseString(a)))
 
-	return GzipStringPack([]byte(a))
+	a = strings.Replace(a, "a", "^", len(a))
+	a = strings.Replace(a, "b", "$", len(a))
+	a = strings.Replace(a, "c", "!", len(a))
+	a = strings.Replace(a, "d", "%", len(a))
+
+	return []byte(a)
 }
 
 func Decrypt(text []byte) []byte {
-	text = GzipStringUnpack(text)
+	textString := string(text)
+	textString = strings.Replace(textString, "^", "a", len(textString))
+	textString = strings.Replace(textString, "$", "b", len(textString))
+	textString = strings.Replace(textString, "!", "c", len(textString))
+	textString = strings.Replace(textString, "%", "d", len(textString))
 
-	a, err := base64.StdEncoding.DecodeString(string(text))
+	a, err := base64.StdEncoding.DecodeString(textString)
 	if err != nil {
 		panic(err.Error())
 	}
