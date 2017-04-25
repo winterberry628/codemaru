@@ -20,7 +20,8 @@ func GzipStringUnpack(text []byte) []byte {
 	if err != nil {
 		panic(err.Error())
 	}
-	r.Read(text)
+	result := make([]byte, 100)
+	r.Read(result)
 	r.Close()
 	return b.Bytes()
 }
